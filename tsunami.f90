@@ -25,18 +25,18 @@ program tsunami
     print *,0,h ! initial water height values
 
     time_loop: do n = 1, num_time_steps
-        dh(1) = h(1) - h(grid_size)
-
-        do concurrent (i = 2: grid_size)
-            dh(i) = h(i) - h(i-1)
-        end do
-
-        do concurrent (i = 1: grid_size)
-            h(i) = h(i) - c * dh(i) / dx * dt
-        end do
-
-        print *,n,h
-
+        h = h - c * diff(h) / dx * dt
+        print *, n,h
     end do time_loop
 
 end program tsunami
+
+function diff(x) result(dx)
+    real, intent(in) :: x(:)
+    real :: dx(size(x))
+    integer :: im
+
+    im = size(x)
+    dx(1) = x(1) - x(im)
+    dx(2:im) = x(2:im) - x(1:im-1)
+end function diff
